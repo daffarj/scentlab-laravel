@@ -251,10 +251,10 @@ export default function ProductDetail({ auth, product, relatedProducts = [], rev
                                         }`}
                                     />
                                 </button>
-                                <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-burgundy text-white rounded-lg hover:bg-burgundy/90 transition-colors">
+                                {/* <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-burgundy text-white rounded-lg hover:bg-burgundy/90 transition-colors">
                                     <ShoppingCart className="w-5 h-5" />
                                     <span>Add to Cart</span>
-                                </button>
+                                </button> */}
                                 {safeProduct.purchase_link && (
                                     <a
                                         href={safeProduct.purchase_link}
