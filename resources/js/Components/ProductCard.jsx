@@ -1,6 +1,7 @@
-import { Star, CheckSquare, Square } from 'lucide-react';
+import { Star, CheckSquare, Square, Heart } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
-import { Link } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
 
 export function ProductCard({ 
     id,
@@ -10,10 +11,47 @@ export function ProductCard({
     price, 
     rating,
     review_count = 0,
+    is_bookmarked = false,
     showCompare = false,
     isCompared = false,
     onCompareToggle
 }) {
+    const { auth } = usePage().props;
+    const [isBookmarked, setIsBookmarked] = useState(is_bookmarked);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleBookmarkToggle = async (e) => {
+        e.preventDefault();
+        
+        if (!auth?.user) {
+            router.visit('/login');
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            // Use Inertia's router for POST requests with CSRF protection
+            router.post(`/bookmarks/toggle/${id}`, {}, {
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    // Toggle the bookmark state
+                    setIsBookmarked(!isBookmarked);
+                },
+                onError: (errors) => {
+                    console.error('Bookmark error:', errors);
+                    alert('Failed to update bookmark. Please try again.');
+                },
+                onFinish: () => {
+                    setIsLoading(false);
+                }
+            });
+        } catch (error) {
+            console.error('Error toggling bookmark:', error);
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="group bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <Link 
@@ -25,21 +63,38 @@ export function ProductCard({
                     alt={name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                {showCompare && (
+                <div className="absolute top-3 right-3 flex gap-2">
+                    {showCompare && (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                onCompareToggle?.(id);
+                            }}
+                            className="bg-white/90 backdrop-blur-sm p-2 rounded-md hover:bg-white transition-colors"
+                        >
+                            {isCompared ? (
+                                <CheckSquare className="w-5 h-5 text-burgundy" />
+                            ) : (
+                                <Square className="w-5 h-5 text-mid-gray" />
+                            )}
+                        </button>
+                    )}
                     <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            onCompareToggle?.(id);
-                        }}
-                        className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-md hover:bg-white transition-colors"
+                        onClick={handleBookmarkToggle}
+                        disabled={isLoading}
+                        className={`bg-white/90 backdrop-blur-sm p-2 rounded-md hover:bg-white transition-colors ${
+                            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
                     >
-                        {isCompared ? (
-                            <CheckSquare className="w-5 h-5 text-burgundy" />
-                        ) : (
-                            <Square className="w-5 h-5 text-mid-gray" />
-                        )}
+                        <Heart
+                            className={`w-5 h-5 ${
+                                isBookmarked 
+                                    ? 'fill-burgundy text-burgundy' 
+                                    : 'text-mid-gray'
+                            }`}
+                        />
                     </button>
-                )}
+                </div>
             </Link>
             
             <div className="p-4">

@@ -10,9 +10,21 @@ class ProfileController extends Controller
 {
     public function show(): Response
     {
-        // Mock bookmarked products (nanti bisa dikembangkan dengan pivot table)
+        // Get bookmarked products for authenticated user
         $bookmarkedProducts = auth()->user()
-            ? \App\Models\Product::limit(3)->get()
+            ? auth()->user()->bookmarkedProducts()
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'brand' => $product->brand,
+                        'price' => $product->price,
+                        'image_url' => $product->image_url,
+                        'rating' => $product->rating ?? 0,
+                        'review_count' => $product->review_count ?? 0,
+                    ];
+                })
             : collect();
 
         return Inertia::render('Profile/UserProfile', [

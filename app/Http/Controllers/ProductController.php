@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Brand;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,21 +15,24 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Get all products WITHOUT is_active filter first (untuk testing)
+        $user = auth()->user();
+        
+        // Get all products
         $products = Product::all()
-            ->map(function ($product) {
+            ->map(function ($product) use ($user) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
                     'brand' => $product->brand,
                     'price' => $product->price,
-                    'image' => $product->image_url, // Changed from image_url to image
+                    'image' => $product->image_url,
                     'image_url' => $product->image_url,
                     'gender' => $product->gender,
                     'category' => $product->category,
                     'rating' => $product->rating ?? 0,
                     'review_count' => $product->review_count ?? 0,
-                    'fragrance_notes' => $product->fragrance_notes, // Auto cast to array
+                    'fragrance_notes' => $product->fragrance_notes,
+                    'is_bookmarked' => $user ? $user->hasBookmarked($product->id) : false,
                 ];
             });
         
@@ -50,13 +54,6 @@ class ProductController extends Controller
             \Log::error('Error getting fragrance notes: ' . $e->getMessage());
         }
         
-        // Debug: Log data count
-        \Log::info('Catalog Data', [
-            'products_count' => $products->count(),
-            'brands_count' => $brands->count(),
-            'notes_count' => $allNotes->count(),
-        ]);
-        
         return Inertia::render('Catalog', [
             'products' => [
                 'data' => $products
@@ -72,6 +69,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
+        $user = auth()->user();
         
         // Safely handle fragrance_notes
         $fragranceNotes = $product->fragrance_notes;
@@ -100,6 +98,43 @@ class ProductController extends Controller
                     'rating' => $p->rating ?? 0,
                 ];
             });
+
+        // Get reviews with user information
+        $reviews = Review::where('product_id', $id)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'rating' => $review->rating,
+                    'comment' => $review->comment,
+                    'created_at' => $review->created_at->diffForHumans(),
+                    'user' => [
+                        'id' => $review->user->id,
+                        'name' => $review->user->name,
+                    ],
+                ];
+            });
+
+        // Check if current user has already reviewed this product
+        $userReview = null;
+        if ($user) {
+            $userReview = Review::where('product_id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+            
+            if ($userReview) {
+                $userReview = [
+                    'id' => $userReview->id,
+                    'rating' => $userReview->rating,
+                    'comment' => $userReview->comment,
+                ];
+            }
+        }
+
+        // Check if product is bookmarked
+        $isBookmarked = $user ? $user->hasBookmarked($id) : false;
         
         return Inertia::render('ProductDetail', [
             'product' => [
@@ -118,8 +153,11 @@ class ProductController extends Controller
                 'projection' => $product->projection ?? 5,
                 'longevity' => $product->longevity ?? 5,
                 'purchase_link' => $product->purchase_link ?? '',
+                'is_bookmarked' => $isBookmarked,
             ],
             'relatedProducts' => $relatedProducts,
+            'reviews' => $reviews,
+            'userReview' => $userReview,
         ]);
     }
 }
