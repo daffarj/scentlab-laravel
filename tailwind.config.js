@@ -18,8 +18,8 @@ export default {
                 'mid-gray': '#6E6E6E',
             },
             fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                serif: ['Playfair Display', 'serif'],
+                sans: ['Poppins', 'sans-serif'], // Ubah dari Inter ke Poppins
+                serif: ['Poppins', 'sans-serif'], // Ubah dari Playfair Display ke Poppins
             },
         },
     },
