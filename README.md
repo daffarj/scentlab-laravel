@@ -457,20 +457,6 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
----
-
 ## 🙏 Acknowledgments
 
 - Laravel Framework Team
@@ -478,12 +464,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - React Team
 - Tailwind CSS Team
 - All open-source contributors
-
----
-
-## 📞 Support
-
-For support, email your.email@example.com or open an issue on GitHub.
 
 ---
 
@@ -531,4 +511,4 @@ For support, email your.email@example.com or open an issue on GitHub.
 
 ---
 
-**Made with ❤️ and ☕ by [Your Name]**
+**Made by Kelompok 4 - PemWeb TI-C
