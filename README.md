@@ -34,14 +34,14 @@ A sophisticated web application for browsing, comparing, and managing premium pe
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Laravel 11.x** - PHP Framework
+- **Laravel 12.0** - PHP Framework
 - **MySQL** - Database
 - **Inertia.js** - Modern monolith architecture
 - **Laravel Sanctum** - API authentication
 
 ### Frontend
-- **React 18.x** - JavaScript library
-- **Tailwind CSS 3.x** - Utility-first CSS framework
+- **React 19.2.0** - JavaScript library
+- **Tailwind CSS 4.0** - Utility-first CSS framework
 - **Vite** - Build tool and dev server
 - **Lucide React** - Icon library
 - **Ziggy** - Laravel route helper for JavaScript
@@ -463,11 +463,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 👨‍💻 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
 
 ---
 
@@ -489,7 +484,7 @@ For support, email your.email@example.com or open an issue on GitHub.
 
 ## 🔄 Changelog
 
-### Version 1.0.0 (2025-01-XX)
+### Version 1.0.0 (2025-11-17)
 - Initial release
 - Product catalog with advanced filtering
 - Product comparison feature
